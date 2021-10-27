@@ -1,12 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+	Authors: Gallifrey
+
+	This file contains signal utilities. These include functions to generate
+	sine waves, square waves, fast fourier transforms and dealing with iq and wav files
+
+	Some functions are incomplete
+"""
+
 import numpy as np
 from math import pi
-from visualizer import Visualizer, graphData
-from data_utils import dataUtils
-
-sampling_freq = 1000
-carrier_freq = 50
-symbol_duration = 0.1
-t_duration = 100
 
 def generate_t(total_time,sampling_freq):
 	#Generate an array for the time axis
@@ -30,8 +33,6 @@ def generate_binary_waveform(bin_data,symbol_duration,sampling_freq):
 	'''
 	#First create an array of all 1s. The length of this would be
 	#sampling_freq times the duration of each symbol
-	#bin_sig = np.ones(len(bin_data)*int(sampling_freq*symbol_duration))
-	#bin_sig = np.array(list(np.ones(int(sampling_freq*symbol_duration)) if i == 1 else np.zeros(int(sampling_freq*symbol_duration)) for i in bin_data))
 	bin_sig = []
 	for i in bin_data:
 		if i == 1:
@@ -47,30 +48,20 @@ def generate_binary_waveform(bin_data,symbol_duration,sampling_freq):
 def get_binary_data_from_square_wave(symbol_duration,sampling_freq,sig):
 	'''
 		Gets back binary data from a square wave
+		Only supports no. of symbols = 2
 	'''
+	#Define the jump at which to sample square wave
 	jump = int(sampling_freq*symbol_duration)
+	#Sample the wave
 	data = np.array([sig[x] for x in range(0,len(sig),jump)])
 	data[data == -1] = 0
 	return data.astype(int)
 
 def get_fft(signal):
+	'''
+		Returns the fast fourier transform of a signal
+	'''
 	return np.fft.fft(signal)
-
-def save_as_iq(signal,file_path):
-	## TODO: Add checks to ensure correct datatype
-	signal = signal.astype(np.complex64)
-	signal.tofile(file_path)
-
-def read_from_iq(file_path):
-	return np.fromfile(file_path, dtype=np.complex64)
 
 def windowing(signal,t):
 	return signal * np.hamming(t)
-
-if __name__ == '__main__':
-	# ONLY FOR DEBUGGING
-	barr = dataUtils.get_binary_array_from_Data('CTF{FL4G}')
-	binary_signal, total_time = generate_binary_waveform(barr,symbol_duration,sampling_freq)
-	barr = get_binary_data_from_square_wave(symbol_duration,sampling_freq,binary_signal)
-	print(list(barr))
-	print(dataUtils.get_data_from_binary_array(barr))

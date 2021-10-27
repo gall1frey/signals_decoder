@@ -1,9 +1,13 @@
 class Visualizer:
+	'''
+		# TODO: Add other visualizers, complete waterfall
+	'''
 	def plot_waves(graph_data_list):
+		'''
+			Visualize wave signals as subplots on time or frequency domain
+			Currently supports five plots at a time
+		'''
 		import matplotlib.pyplot as plt
-		'''
-			Visualize wave signals as subplots on time domain
-		'''
 		if len(graph_data_list) > 5:
 			print("CAN'T PLOT SO MANY GRAPHS!")
 			return
@@ -30,6 +34,9 @@ class Visualizer:
 		pass
 
 class graphData:
+	'''
+		Class to hold data to plot
+	'''
 	def __init__(self,x_axis_array,y_axis_array,xlabel,ylabel):
 		self.x_axis_array = x_axis_array
 		self.y_axis_array = y_axis_array

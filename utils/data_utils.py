@@ -2,7 +2,7 @@ import numpy as np
 class dataUtils:
 	def get_random_data(num_symbols):
 		'''
-			Generates a ranrom array of length num_symbols
+			Generates a random array of length num_symbols
 			Currently only generates an array of two kinds of symbols
 			(0,1). Needs to be modified to generate an array of any number of symbols
 		'''
