@@ -4,4 +4,7 @@ from utils.file_utils import fileUtils
 from utils.graph_utils import graphUtils, graphData
 
 class Radio(sigUtils,dataUtils,fileUtils,graphUtils,graphData):
-	pass
+	def __init__(self,symbol_duration,sampling_freq):
+		self.symbol_duration = symbol_duration
+		self.sampling_freq = sampling_freq
+		self.samples_per_symbol = sampling_freq/symbol_duration

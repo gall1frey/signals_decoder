@@ -1,15 +1,16 @@
 class fileUtils:
-	def save_to_iq(self,wave,file_path):
+	def save_to_iq(self,signal,file_path):
 		"""
-			Save wave to iq file
+			Save signal to iq file
 		"""
-		## TODO:
+		signal = signal.astype(np.complex64)
+		signal.tofile(file_path)
 
 	def read_from_iq(self,file_path):
 		"""
-			Read wave from iq file
+			Read signal from iq file
 		"""
-		## TODO:
+		return np.fromfile(file_path, dtype=np.complex64)
 
 	def save_to_wav(self,wave,file_path):
 		"""

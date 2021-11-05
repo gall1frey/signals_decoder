@@ -1,3 +1,6 @@
+import numpy as np
+from math import pi
+
 class sigUtils:
 	def bin_data_to_signal(self,data,symbol_duration,carrier_freq,sampling_freq):
 		"""
@@ -31,12 +34,11 @@ class sigUtils:
 		## TODO:
 		return demodulated
 
-	def generate_t(self,total_time,callback=None):
+	def generate_t(self,total_time,sampling_freq,callback=None):
 		"""
 			Generate time array
 		"""
-		t = []
-		## TODO:
+		t = np.arange(0,total_time,1/sampling_freq)
 		return t
 
 	def generate_f(self,total_time,callback=None):
@@ -65,4 +67,8 @@ class sigUtils:
 
 	#ADD FILTER FUNCTIONS
 	def filter_abc(self):
+		pass
+
+	#COMPLETE THIS
+	def get_fft(self):
 		pass
