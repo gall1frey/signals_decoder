@@ -9,18 +9,18 @@ class graphData:
 		self.ylabel = ylabel
 
 class graphUtils:
-	def plot_wave(self,graph_list):
+	def plot_wave(graph_data_list):
 		"""
 			Plot waves for each val in graph_list
 		"""
 		for i in graph_data_list:
-			plt.plot(graph_data_list[i].x_axis_array,graph_data_list[i].y_axis_array)
+			plt.plot(i.x,i.y)
 			plt.title('graph1')
-			plt.xlabel(graph_data_list[i].xlabel)
-			plt.ylabel(graph_data_list[i].ylabel)
+			plt.xlabel(i.xlabel)
+			plt.ylabel(i.ylabel)
 			plt.show()
 
-	def waterfall(self,wave):
+	def waterfall(wave):
 		"""
 			Plot waterfall
 		"""
