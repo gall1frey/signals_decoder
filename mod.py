@@ -25,8 +25,40 @@ class QAM16(QAM):
 		self.q2 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq,modulation=self.modulation)
 
 	def modulate(self,binarray):
-		data1,data2 = split_data(binarray,bits=4)
+		data1,data2 = split_data(binarray,bits=self.bits_per_sample)
 		return self.q1.generate_signal(data1) + self.q2.generate_signal(data2)
+
+	def demodulate(self):
+		pass
+
+class QAM64(QAM):
+	def __init__(self,sampling_freq = 10,carrier_freq = 9.9e3):
+		self.bits_per_sample = 6
+		self.modulation = {
+			## TODO: Calculate the constellation points
+		}
+		self.q1 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq,modulation=self.modulation)
+		self.q2 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq,modulation=self.modulation)
+
+	def modulate(self,binarray):
+		data1,data2 = split_data(binarray,bits=self.bits_per_sample)
+		return self.q1.generate_signal(data1) + self.q2.generate_signal(data2)
+
+	def demodulate(self):
+		pass
+
+class BPSK(QAM):
+	def __init__(self,sampling_freq = 10,carrier_freq = 9.9e3):
+		self.bits_per_sample = 1
+		self.modulation = {
+			'0' : (1,0),
+			'1' : (1,180),
+			}
+		self.q1 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq,modulation=self.modulation)
+
+	def modulate(self,binarray):
+		data = ''.join([str(i) for i in binarray])
+		return self.q1.generate_signal(data)
 
 	def demodulate(self):
 		pass

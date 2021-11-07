@@ -1,7 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from .signal import Signal
 
-class QAM:
+class QAM(Signal):
 	def __init__(self,
 			modulation = {'0':(0,0), '1':(1,0)},
 			sampling_freq = 10,

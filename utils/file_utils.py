@@ -46,7 +46,6 @@ class fileUtils:
 		freqs = fft(data/normalizer)
 		return sampling_freq, duration, freqs
 
-
 	def read_from_sdr(self,dev):
 		"""
 			Read wave from sdr
