@@ -25,14 +25,19 @@ class graphUtils:
 			Plot waterfall
 		"""
 		## TODO:
+		pass
 
-	def plot_constellation(self,sx,sy,t):
-		plt.clf()
+	def plot_constellation(self,data):
+		"""
+			Plot constellation
+		"""
+		sx,sy,t = zip(*data)
+		#plt.clf()
 		plt.scatter(sx,sy,s=30)
-		plt.axes().set_aspect('equal')
 		for x,y,t in data:
 			plt.annotate(t,(x-.03,y-.03), ha='right', va='top')
 		plt.axis([-1.5,1.5,-1.5,1.5])
 		plt.axhline(0, color='red')
 		plt.axvline(0, color='red')
 		plt.grid(True)
+		plt.show()

@@ -1,61 +1,78 @@
-#import numpy as np
-from math import pi
+import numpy as np
+from matplotlib import pyplot as plt
+from .signal import Signal
 
-def constellation_map_gen(basis_cpoints, basis_symbols, k, pi):
-	const_points = basis_cpoints
-	s = basis_symbols
-	symbols = list()
-	for s_i in s:
-		tmp = 0
-		for i,p in enumerate(pi):
-			bit = (s_i >> i) & 0x1
-			tmp |= bit << p
-		symbols.append(tmp ^ k)
-	return (const_points, symbols)
+class QAM:
+	def __init__(self,modulation = {'0':(0,0), '1':(1,0)},sampling_freq = 10,bits_per_sample = 1,carrier_freq = 100):
+		self.modulation = modulation
+		self.sampling_freq = sampling_freq
+		self.bits_per_sample = bits_per_sample
+		self.carrier_freq = carrier_freq
 
-def generic_fsk_mod()
+	def generate_signal(self, data):
+		'''
+		Generate signal corresponding to the current modulation scheme to
+		represent given binary string, data.
+		'''
+		def create_func(data):
+			slot_data = []
+			for i in range(0,len(data),self.bits_per_sample):
+				slot_data.append(self.modulation[data[i:i+self.bits_per_sample]])
+			def timefunc(t):
+				slot = int(t*self.sampling_freq)
+				start = float(slot)/self.sampling_freq
+				offset = t - start
+				amplitude,phase = slot_data[slot]
+				return amplitude*np.sin(2*np.pi*self.carrier_freq*offset +
+					phase/180.0*np.pi)
+			return timefunc
+		func = create_func(data)
+		duration = float(len(data))/(self.sampling_freq*self.bits_per_sample)
+		s = Signal(total_time=duration, func=func)
+		return s
 
-'''class sigUtils:
-	def bin_data_to_signal(self,data,symbol_duration,carrier_freq,sampling_freq):
-		"""
-			Convert binary array to square wave
-		"""
-		bin_sig = []
-		for i in data:
-			if i == 1:
-				bin_sig.extend(list(np.ones(int(sampling_freq*symbol_duration))))
-			else:
-				bin_sig.extend(list(np.zeros(int(sampling_freq*symbol_duration))))
-		#Substitute in -1 in the signal at all indexes where
-		bin_sig = np.array(bin_sig)
-		bin_sig[bin_sig == 0] = -1
-		total_time = len(data)*symbol_duration
-		return bin_sig.astype(int), total_time
+	def get_constellations(self):
+		data = [(a*np.cos(p/180.0*np.pi), a*np.sin(p/180.0*np.pi), t)
+				for t,(a,p) in self.modulation.items()]
+		return data
 
-	def signal_to_bin_data(self,sig,symbol_duration,carrier_freq,sampling_freq):
-		"""
-			Convert square wave to binary Data
-		"""
-		data = []
-		jump = int(sampling_freq*symbol_duration)
-		#Sample the wave
-		data = np.array([sig[x] for x in range(0,len(sig),jump)])
-		data[data == -1] = 0
-		return data.astype(int)
+def split_data(data,bits):
+	data = list(data)
+	if len(data) % bits != 0:
+		data.extend([0 for i in range(bits - (len(data) % bits))])
+	data1 = ''
+	data2 = ''
+	for i in range(0,len(data),bits):
+		data1 += ''.join([str(j) for j in data[i:i+bits//2]])
+		data2 += ''.join([str(j) for j in data[i+bits//2:i+bits]])
+	return data1,data2
 
-	def analog_mod_fm(self,wave,carrier_freq,sampling_freq):
-		"""
-			Analog FM Modulation
-		"""
-		modulated = []
-		## TODO:
-		return modulated
+'''
+	class sigUtils:
+		def bin_data_to_signal(self,data,symbol_duration,carrier_freq,sampling_freq):
+			"""
+				Convert binary array to square wave
+			"""
+			bin_sig = []
+			for i in data:
+				if i == 1:
+					bin_sig.extend(list(np.ones(int(sampling_freq*symbol_duration))))
+				else:
+					bin_sig.extend(list(np.zeros(int(sampling_freq*symbol_duration))))
+			#Substitute in -1 in the signal at all indexes where
+			bin_sig = np.array(bin_sig)
+			bin_sig[bin_sig == 0] = -1
+			total_time = len(data)*symbol_duration
+			return bin_sig.astype(int), total_time
 
-	def analog_demod_fm(self,wave,carrier_freq,sampling_freq):
-		"""
-			Analog FM Demodulation
-		"""
-		demodulated = []
-		## TODO:
-		return demodulated
+		def signal_to_bin_data(self,sig,symbol_duration,carrier_freq,sampling_freq):
+			"""
+				Convert square wave to binary Data
+			"""
+			data = []
+			jump = int(sampling_freq*symbol_duration)
+			#Sample the wave
+			data = np.array([sig[x] for x in range(0,len(sig),jump)])
+			data[data == -1] = 0
+			return data.astype(int)
 '''
