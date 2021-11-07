@@ -4,21 +4,21 @@ from utils.graph_utils import graphUtils, graphData
 from utils.qam import QAM
 
 class Radio(Signal,dataUtils,graphUtils,graphData):
-	def __init__(self,symbol_duration,sampling_freq):
-		self.symbol_duration = symbol_duration
+	def __init__(self,bits_per_sample=1,sampling_freq=10,carrier_freq=100):
+		self.bits_per_sample = bits_per_sample
 		self.sampling_freq = sampling_freq
-		self.samples_per_symbol = sampling_freq/symbol_duration
+		self.carrier_freq = carrier_freq
 		self.super.__init__()
 
 if __name__ == '__main__':
 	#DEBUGGING
-	s = Signal()
-	#sine = s.generate_sin(1,1000,50)
-	sine = s.square_wave(2,flimit=50)
-	#ffts = s.get_fft(sine)
-	x, y = s.get_time_domain(sine,0.1)
+	'''s = Signal()
+	d = dataUtils()
+	s.square_wave(2,flimit=10)
+	x, y = s.get_time_domain()
 	g1 = graphData(x,y,'x','amplitude')
-	#x = s.windowing(sine)
-	x,a,p = s.get_frequency_domain(sine,1000)
+	x,a,p = s.get_frequency_domain()
 	g2 = graphData(x,a,'x','amplitude')
-	graphUtils.plot_wave([g1,g2])
+	g3 = graphData(x,p,'x','amplitude')
+	graphUtils.plot_wave([g1,g2,g3])
+	'''
