@@ -2,8 +2,7 @@ from utils.data_utils import dataUtils
 from utils.signal import Signal
 from utils.graph_utils import graphUtils, graphData
 from utils.file_utils import fileUtils
-from utils.modulation_utils import QAM
-from mod import *
+from modulators import *
 
 class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 	def __init__(self,bits_per_sample=1,sampling_freq=10,carrier_freq=50):
@@ -16,15 +15,16 @@ class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 		self.QAM256 = QAM256
 		self.BPSK = BPSK
 		self.PSK8 = PSK8
+		self.GFSK = GFSK
 
 if __name__ == '__main__':
 	#DEBUGGING
 	r = Radio()
 	d = dataUtils()
 	data = d.str_to_binarray('Hello there, General Kenobi')
-	qam16 = r.BPSK(sampling_freq=10,carrier_freq=50)
+	qam16 = r.GFSK(sampling_freq=10,carrier_freq=50)
 	s = qam16.modulate(data)
-	graphUtils().plot_constellation(qam16.get_constellations())
+	#graphUtils().plot_constellation(qam16.get_constellations())
 	x, y = s.get_time_domain()
 	g1 = graphData(x,y,'time','amplitude')
 	x, a, p = s.get_frequency_domain()
