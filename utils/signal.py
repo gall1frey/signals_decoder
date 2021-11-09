@@ -180,6 +180,9 @@ class Signal(fileUtils):
 				'Signal to mix must have identical sampling frequency and total_time')
 		self.signal += signal.signal
 
+	def gaussian_filter(self,signal):
+		pass
+
 	def __add__(self, s):
 		newSignal = self.copy()
 		newSignal.mix(s)

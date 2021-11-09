@@ -70,6 +70,12 @@ class PSK8(QAM):
 		pass
 
 class GFSK():
-	def __init__(self,sampling_freq = 10,carrier_freq = 9.9e3):
+	def __init__(self,sampling_freq = 10,carrier_freq = 9.9e3,bits_per_sample=1):
+		self.bits_per_sample = bits_per_sample
 		self.sampling_freq = sampling_freq
 		self.carrier_freq = carrier_freq
+		self.q1 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq)
+
+	def modulate(self,binarray):
+		data = ''.join([str(i) for i in binarray])
+		return self.q1.generate_signal(data)
