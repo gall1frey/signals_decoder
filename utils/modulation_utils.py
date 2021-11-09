@@ -17,7 +17,10 @@ class QAM:
 		def create_func(data):
 			slot_data = []
 			for i in range(0,len(data),self.bits_per_sample):
-				slot_data.append(self.modulation[data[i:i+self.bits_per_sample]])
+				try:
+					slot_data.append(self.modulation[data[i:i+self.bits_per_sample]])
+				except:
+					slot_data.append(self.modulation[data[i:i+self.bits_per_sample]+'0'*(self.bits_per_sample-len(data[i:i+self.bits_per_sample]))])
 			def timefunc(t):
 				slot = int(t*self.sampling_freq)
 				start = float(slot)/self.sampling_freq
