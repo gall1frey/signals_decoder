@@ -50,6 +50,27 @@ def split_data(data,bits):
 		data2 += ''.join([str(j) for j in data[i+bits//2:i+bits]])
 	return data1,data2
 
+class FSK:
+	def __init__(self,sampling_freq = 10,bits_per_sample = 1,carrier_freq = 100,amplitude=1):
+		self.sampling_freq = sampling_freq
+		self.bits_per_sample = bits_per_sample
+		self.carrier_freq = carrier_freq
+		self.amplitude = amplitude
+
+	def generate_signal(self,data):
+		def create_func(data):
+			slot_data = []
+			for i in range(0,len(data),self.bits_per_sample):
+				slot_data.extend(list(str(data[i])*self.bits_per_sample))
+			slot_data = np.array(slot_data).astype(int)
+			slot_data = slot_data*2-1
+			def timefunc(t):
+				return self.amplitude*np.sin(2*np.pi*(self.carrier_freq+self.carrier_freq*slot_data[int(t)]/2)*t)
+			return timefunc
+		func = create_func(data)
+		duration = float(len(data))/(self.sampling_freq*self.bits_per_sample)
+		s = Signal(total_time=duration, func=func)
+		return s
 '''
 	class sigUtils:
 		def bin_data_to_signal(self,data,symbol_duration,carrier_freq,sampling_freq):
