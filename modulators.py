@@ -74,7 +74,7 @@ class GFSK():
 		self.bits_per_sample = bits_per_sample
 		self.sampling_freq = sampling_freq
 		self.carrier_freq = carrier_freq
-		self.q1 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq)
+		
 
 	def modulate(self,binarray):
 		data = ''.join([str(i) for i in binarray])
