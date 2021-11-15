@@ -1,9 +1,9 @@
-from .file_utils import fileUtils
+#from .file_utils import fileUtils
 from scipy.fftpack import fft, ifft
 import numpy as np
 
-class Signal(fileUtils):
-	def __init__(self, total_time=1.0, sampling_freq=22050, func=None):
+class Signal():
+	def __init__(self, total_time=1.0, sampling_freq=22050, func=None, iq_func=False):
 		'''
 		Initialize a signal object with the specified total_time (in seconds)
 		and sampling frequency (in Hz).  If func is provided, signal
@@ -14,8 +14,13 @@ class Signal(fileUtils):
 		self.sampling_freq = sampling_freq
 		self.signal = np.arange(int(total_time*sampling_freq), dtype=complex)
 		self.signal[:] = 0j
+		self.baseband = np.arange(int(total_time*sampling_freq), dtype=complex)
+		self.baseband[:] = 0j
 		if func is not None:
-			self.sample_time_function(func)
+			if iq_func == True:
+				self.sample_iq(func)
+			else:
+				self.sample_time_function(func)
 
 	def get_sampling_freq(self):
 		'''
@@ -29,11 +34,14 @@ class Signal(fileUtils):
 		'''
 		return self.total_time
 
-	def amplify(self, factor):
+	def amplify(self, factor, sig):
 		'''
 		Amplify the signal by the specified factor
 		'''
-		self.signal *= factor
+		if sig == 'signal':
+			self.signal *= factor
+		else:
+			self.baseband *= factor
 
 	def clear(self, cond=lambda f:True):
 		'''
@@ -71,9 +79,10 @@ class Signal(fileUtils):
 		sampling frequency associated with the Signal object.
 		'''
 		n = len(self.signal)
-		signal = np.arange(n, dtype=float)
+		signal = np.arange(n, dtype=complex)
 		for i in range(n):
 			signal[i] = func(float(i)/self.sampling_freq)
+		#print(signal)
 		self.signal = fft(signal)
 
 	def square_wave(self, freq, flimit=8000):
@@ -92,8 +101,10 @@ class Signal(fileUtils):
 		and Y is an array storing time-domain representation of the signal
 		'''
 		x_axis = np.linspace(0, self.total_time, len(self.signal))
-		y_axis = ifft(self.signal).real
-		return x_axis, y_axis
+		y_axis1 = ifft(self.signal).real
+		y_axis2 = (self.baseband).real
+		y_axis3 = (self.baseband).imag
+		return x_axis, y_axis1, y_axis2, y_axis3
 
 	def get_frequency_domain(self):
 		'''
@@ -182,6 +193,16 @@ class Signal(fileUtils):
 
 	def gaussian_filter(self,signal):
 		pass
+
+	def amp_limit(self,limit):
+		self.signal[self.signal > limit] = limit
+
+	def add_noise(self,peak_amp):
+		noise = (np.random.randn(len(self.signal))+1)*peak_amp
+		sig = self.signal + noise
+		snr = np.log10(np.mean(np.square(sig))/np.mean(np.square(noise)))*10
+		self.signal = sig
+		return snr
 
 	def __add__(self, s):
 		newSignal = self.copy()

@@ -14,11 +14,12 @@ class graphUtils:
 			Plot waves for each val in graph_list
 		"""
 		for i in graph_data_list:
+			#plt.subplot(3,1,graph_data_list.index(i)+1)
 			plt.plot(i.x,i.y)
 			plt.title('graph1')
 			plt.xlabel(i.xlabel)
 			plt.ylabel(i.ylabel)
-			plt.show()
+		plt.show()
 
 	def waterfall(wave):
 		"""
