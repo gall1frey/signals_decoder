@@ -1,4 +1,5 @@
 import numpy as np
+import string
 
 class dataUtils:
 	def generate_random_data(self,num_bits):
@@ -118,3 +119,31 @@ class dataUtils:
 			for i in binarray:
 				op_array.append(int(not i))
 		return op_array
+
+	def find_sync(self,binarray):
+		"""
+			Find the SYNC word of a signal
+		"""
+		#Find length of sig:
+		start = binarray[0:8]
+		bin_list = [binarray[i:i+8] for i in range(0,len(binarray),8)]
+		total_bytes = bin_list[1:].index(start)
+		total_bits = total_bytes*8
+		max_score = 0.0
+		sync = ''
+		for i in range(0,total_bits):
+			b = binarray[i:]
+			bytes = [chr(int(b[j:j+8],2)) for j in range(8,len(b),8) if chr(int(b[j:j+8],2)) in string.printable]
+			score = len(bytes)/total_bytes
+			if score > max_score:
+				max_score = score
+				sync = b[0:8]
+		return max_score,hex(int(sync,2))
+
+	def decode_with_sync(self,binarray,sync):
+		"""
+			Decode a binary array using sync word (in hex)
+		"""
+		start = binarray.index(bin(int(sync,16))[2:])+8
+		bin_list = [chr(int(binarray[start:][i:i+8],2)) for i in range(0,len(binarray),8) if len(binarray[start:][i:i+8]) > 0]
+		return ''.join(bin_list)
