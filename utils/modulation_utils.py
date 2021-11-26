@@ -128,7 +128,6 @@ class QAM(HelperBlocks):
 			time_res = timefunc(i/s.get_sampling_freq())
 			s.baseband[i] = time_res
 		s.signal = self.generate_signal(data).signal
-		print(s.baseband)
 		s.baseband = ifft(s.baseband)
 		return s
 
@@ -141,8 +140,6 @@ class QAM(HelperBlocks):
 		data = ''
 		s = []
 		max_amp = max(sig.baseband)
-		print(max_amp)
-		#sig.amplify(self.amplitude/max_amp,'baseband')
 		s_ = fft(sig.baseband)
 		thresh = self.amplitude/self.bits_per_sample/2
 		print("NOISE THRESH:",thresh)
