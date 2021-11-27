@@ -128,22 +128,35 @@ class dataUtils:
 		start = binarray[0:8]
 		bin_list = [binarray[i:i+8] for i in range(0,len(binarray),8)]
 		total_bytes = bin_list[1:].index(start)
-		total_bits = total_bytes*8
+		total_bits = (total_bytes+1)*8
 		max_score = 0.0
 		sync = ''
 		for i in range(0,total_bits):
-			b = binarray[i:]
+			b = ''.join(binarray[(i+j)%total_bits] for j in range(total_bits))
 			bytes = [chr(int(b[j:j+8],2)) for j in range(8,len(b),8) if chr(int(b[j:j+8],2)) in string.printable]
 			score = len(bytes)/total_bytes
 			if score > max_score:
 				max_score = score
 				sync = b[0:8]
-		return max_score,hex(int(sync,2))
+		return max_score,hex(int(sync,2))[2:]
 
 	def decode_with_sync(self,binarray,sync):
 		"""
 			Decode a binary array using sync word (in hex)
 		"""
-		start = binarray.index(bin(int(sync,16))[2:])+8
-		bin_list = [chr(int(binarray[start:][i:i+8],2)) for i in range(0,len(binarray),8) if len(binarray[start:][i:i+8]) > 0]
-		return ''.join(bin_list)
+		start = binarray[0:8]
+		bin_list = [binarray[i:i+8] for i in range(0,len(binarray),8)]
+		total_bytes = bin_list[1:].index(start)
+		total_bits = (total_bytes+1)*8
+		max_score = 0.0
+		msg = ''
+		for i in range(0,total_bits):
+			b = ''.join(binarray[(i+j)%total_bits] for j in range(total_bits))
+			if b[0:8] == bin(int(sync,16))[2:]:
+				bytes = [chr(int(b[j:j+8],2)) for j in range(8,len(b),8) if chr(int(b[j:j+8],2)) in string.printable]
+				score = len(bytes)/total_bytes
+				if score > max_score:
+					max_score = score
+					msg = ''.join(bytes)
+		#return max_score,hex(int(sync,2))[2:]
+		return msg
