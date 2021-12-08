@@ -118,6 +118,9 @@ class QAM(HelperBlocks):
 
 	def constellation_mapper(self,data):
 		slot_data = []
+		if len(data) % self.bits_per_sample != 0:
+			padding = '0'* (self.bits_per_sample - len(data) % self.bits_per_sample)
+			data += padding
 		for i in range(0,len(data),self.bits_per_sample):
 			mod_data = self.modulation[data[i:i+self.bits_per_sample]]
 			slot_data.append(mod_data)

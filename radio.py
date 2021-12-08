@@ -4,6 +4,7 @@ from utils.graph_utils import graphUtils, graphData
 from utils.file_utils import fileUtils
 from modulators import *
 from prediction_function import Predictor
+import tensorflow as tf
 
 class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 	def __init__(self,bits_per_sample=1,sampling_freq=10,carrier_freq=50,model_path=None):
@@ -59,30 +60,41 @@ if __name__ == '__main__':
 
 	#Convert string data to binary array to transmit
 	#data = d.str_to_binarray('Hunger looks very like evil from the wrong end of the cutlery')
-	data = d.str_to_binarray('abcde')
+	data = d.str_to_binarray('hello')
 
 	#Modulate
-	modulated = r.GFSK(sampling_freq=10,carrier_freq=5)
+	modulated = r.GFSK(sampling_freq=10,carrier_freq=10)
 	s = modulated.modulate(data)
 
 	#Predict modulation
-	print(s.signal)
-	print(r.predict_modulation(s.get_time_domain()[:1]))
+	#re = s.copy().signal.real[:128]
+	#i = s.copy().signal.imag[:128]
+	#sig = np.array([[re,i]])
+	#print("PREDICTION:",r.predict_modulation(tf.expand_dims(sig, axis=-1)))
 
-
+	'''
+	[
+		[[r1,r2,...,r128],[i1,i2,...,i128]]
+		[[r1,r2,...],[i1,i2,...]]
+		[[r1,r2,...],[i1,i2,...]]
+	]
+	'''
 	#Demodulate
 	demod_, samp_freq = modulated.demodulate(s,'filtered')
 	demod, samp_freq = modulated.demodulate(s)
 
 	#Convert data to string
+	#print(d.binarray_to_string(demod))
 	print(d.binarray_to_string(demod[::samp_freq][1:]))
 
 	#visualize
-	#graphUtils().plot_constellation('constellation map for GFSK modulation',[modulated.get_sig_constellation(s),qam16.get_constellations()],mods=True)
+	#graphUtils().plot_constellation('constellation map for GFSK modulation',[modulated.get_sig_constellation(s),modulated.get_constellations()],mods=True)
 	#s.amplify(1.5,'baseband')
 	x, y1, y2, y3 = s.get_time_domain()
 	g1 = graphData(x,y1,'time','amplitude')
 	#x, a, p = s.get_frequency_domain()
-	g2 = graphData(x,demod_,'time','amplitude')
-	g3 = graphData(x,demod,'time','amplitude')
-	graphUtils.plot_wave([g1,g2],'superimposed square wave for GFSK modulation')
+	#g2 = graphData(x,y3,'time','amplitude')
+	g2 = graphData(x,demod,'time','amplitude')
+	#g3 = graphData(x,y2,'time','amplitude')
+	g3 = graphData(x,demod_,'time','amplitude')
+	graphUtils.plot_wave([g1,g2,g3],'superimposed square wave for GFSK modulation')
