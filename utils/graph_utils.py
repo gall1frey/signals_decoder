@@ -9,16 +9,16 @@ class graphData:
 		self.ylabel = ylabel
 
 class graphUtils:
-	def plot_wave(graph_data_list):
+	def plot_wave(graph_data_list,title):
 		"""
 			Plot waves for each val in graph_list
 		"""
 		for i in graph_data_list:
 			#plt.subplot(3,1,graph_data_list.index(i)+1)
 			plt.plot(i.x,i.y)
-			plt.title('graph1')
 			plt.xlabel(i.xlabel)
 			plt.ylabel(i.ylabel)
+		plt.title(title)
 		plt.show()
 
 	def waterfall(wave):
@@ -28,7 +28,7 @@ class graphUtils:
 		## TODO:
 		pass
 
-	def plot_constellation(self,data,annotations=True,mods=False):
+	def plot_constellation(self,title,data,annotations=True,mods=False):
 		"""
 			Plot constellation
 		"""
@@ -36,7 +36,10 @@ class graphUtils:
 			sx1,sy1 = zip(data[0])
 			sx2,sy2,t = zip(*data[1])
 			plt.scatter(sx1,sy1,s=50)
-			plt.scatter(sx2,sy2,s=30)
+			plt.scatter(sx2,sy2,s=10)
+			plt.title(title)
+			plt.xlabel('I')
+			plt.ylabel('Q')
 			for x,y,t in data[1]:
 				plt.annotate(t,(x-.03,y-.03), ha='right', va='top')
 		else:

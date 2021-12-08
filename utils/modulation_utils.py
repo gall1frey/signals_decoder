@@ -172,3 +172,6 @@ class FSK:
 		duration = float(len(data))/(self.sampling_freq*self.bits_per_sample)
 		s = Signal(total_time=duration, func=func)
 		return s
+
+	def get_square_wave_from_sig(self,signal):
+		pass
