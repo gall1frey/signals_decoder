@@ -3,7 +3,7 @@ from utils.signal import Signal
 from utils.graph_utils import graphUtils, graphData
 from utils.file_utils import fileUtils
 from modulators import *
-#from prediction_function import Predictor
+from prediction_function import Predictor
 
 class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 	def __init__(self,bits_per_sample=1,sampling_freq=10,carrier_freq=50,model_path=None):
@@ -17,10 +17,10 @@ class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 		self.BPSK = BPSK
 		self.PSK8 = PSK8
 		self.GFSK = GFSK
-		'''if model_path is None:
+		if model_path is None:
 			self.Predictor = Predictor()
 		else:
-			self.Predictor = Predictor(model_path)'''
+			self.Predictor = Predictor(model_path)
 
 	def get_sig_from_file(self,filetype,filepath,channel=None):
 		sampling_freq = self.sampling_freq
@@ -43,10 +43,10 @@ class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 			sampling_freq = sig.sampling_freq
 			self.save_to_iq(signal,sampling_freq,duration,filepath)
 
-	'''def prerict_modulation(self,signal):
+	def predict_modulation(self,signal):
 		if type(signal) == np.complex128:
 			signal = signal.real
-		return self.Predictor.predict(signal)'''
+		return self.Predictor.predict(signal)
 
 if __name__ == '__main__':
 	"""
@@ -58,18 +58,20 @@ if __name__ == '__main__':
 	d = dataUtils()
 
 	#Convert string data to binary array to transmit
-	data = d.str_to_binarray('hello there, general kenobi')
+	#data = d.str_to_binarray('Hunger looks very like evil from the wrong end of the cutlery')
+	data = d.str_to_binarray('abcde')
 
 	#Modulate
 	modulated = r.GFSK(sampling_freq=10,carrier_freq=5)
-
-	#Predict modulation
-	#print(r.predict_modulation(modulated.signal))
-
-	#Demodulate
 	s = modulated.modulate(data)
 
-	#Convert demodulated square wave into signal
+	#Predict modulation
+	print(s.signal)
+	print(r.predict_modulation(s.get_time_domain()[:1]))
+
+
+	#Demodulate
+	demod_, samp_freq = modulated.demodulate(s,'filtered')
 	demod, samp_freq = modulated.demodulate(s)
 
 	#Convert data to string
@@ -81,6 +83,6 @@ if __name__ == '__main__':
 	x, y1, y2, y3 = s.get_time_domain()
 	g1 = graphData(x,y1,'time','amplitude')
 	#x, a, p = s.get_frequency_domain()
-	g2 = graphData(x,demod,'time','amplitude')
-	#g3 = graphData(x,y3,'time','amplitude')
+	g2 = graphData(x,demod_,'time','amplitude')
+	g3 = graphData(x,demod,'time','amplitude')
 	graphUtils.plot_wave([g1,g2],'superimposed square wave for GFSK modulation')

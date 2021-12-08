@@ -69,7 +69,7 @@ class GFSK(FSK):
 
 	def demodulate(self,sig,return_='binarray'):
 		filtered = self.f1.get_square_wave_from_sig(sig.get_time_domain(),sig.sampling_freq)
-		binarray = self.f1.moving_mean(filtered)
+		binarray = self.f1.moving_mean(filtered.copy())
 		samp_freq = self.f1.sampling_freq_detect(binarray)
 		if return_ == 'binarray':
 			return binarray, samp_freq
