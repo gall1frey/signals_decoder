@@ -2,6 +2,10 @@ from .math_utils import *
 import numpy as np
 from .signal import Signal
 from scipy.fftpack import fft, ifft
+import scipy.signal.signaltools as sigtool
+import scipy.signal as signal
+from math import isclose
+from scipy import stats
 
 class HelperBlocks:
 	def serial_to_parallel(self,data,bits_per_sample,num_outputs):
@@ -149,7 +153,8 @@ class QAM(HelperBlocks):
 				if dist < thresh:
 					s.append(pt)
 		sig.baseband = s_
-		return ''.join(s)
+		samp_freq = 1
+		return ''.join(s), samp_freq
 
 class FSK:
 	def __init__(self,sampling_freq = 10,bits_per_sample = 1,carrier_freq = 100,amplitude=1):
@@ -169,9 +174,36 @@ class FSK:
 				return self.amplitude*np.sin(2*np.pi*(self.carrier_freq+self.carrier_freq*slot_data[int(t)]/2)*t)
 			return timefunc
 		func = create_func(data)
-		duration = float(len(data))/(self.sampling_freq*self.bits_per_sample)
+		duration = float(len(data))
 		s = Signal(total_time=duration, func=func)
 		return s
 
-	def get_square_wave_from_sig(self,signal):
-		pass
+	def get_square_wave_from_sig(self,time_domain,sampling_freq):
+		t = time_domain[0]
+		S = time_domain[1]
+		y_diff = np.diff(S,1)*100
+		y_env = np.abs(sigtool.hilbert(y_diff))
+		h=signal.firwin( numtaps=100, cutoff=1*2, nyq=sampling_freq/2)
+		y_filtered=signal.lfilter( h, 1.0, y_env)
+		y_filtered = np.insert(y_filtered,0,0)
+		return y_filtered
+
+	def moving_mean(self,sig):
+		mean = np.mean(y_filtered)
+		sig[sig > mean] = 1
+		sig[sig < mean] = 0
+		return sig
+
+	def sampling_freq_detect(self,binarray):
+		counts = []
+		count = 0
+		for i in range(1,len(binarray)):
+			if binarray[i] == binarray[i-1]:
+				count += 1
+			else:
+				counts.append(count)
+				count = 0
+		counts = list(map(lambda x:int(x/100),counts))
+		#counts = list(filter(lambda x: x != 0, counts))
+		step = stats.mode(counts).mode[0]*100
+		return step
