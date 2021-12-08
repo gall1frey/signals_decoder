@@ -45,9 +45,11 @@ class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 			self.save_to_iq(signal,sampling_freq,duration,filepath)
 
 	def predict_modulation(self,signal):
-		if type(signal) == np.complex128:
-			signal = signal.real
-		return self.Predictor.predict(signal)
+		re = signal.real[:128]
+		i = signal.imag[:128]
+		sig = np.array([[re,i]])
+		sig = tf.expand_dims(sig, axis=-1)
+		return self.Predictor.predict(sig)
 
 if __name__ == '__main__':
 	"""
@@ -67,18 +69,8 @@ if __name__ == '__main__':
 	s = modulated.modulate(data)
 
 	#Predict modulation
-	#re = s.copy().signal.real[:128]
-	#i = s.copy().signal.imag[:128]
-	#sig = np.array([[re,i]])
-	#print("PREDICTION:",r.predict_modulation(tf.expand_dims(sig, axis=-1)))
+	print("PREDICTION:",r.predict_modulation(s.signal))
 
-	'''
-	[
-		[[r1,r2,...,r128],[i1,i2,...,i128]]
-		[[r1,r2,...],[i1,i2,...]]
-		[[r1,r2,...],[i1,i2,...]]
-	]
-	'''
 	#Demodulate
 	demod_, samp_freq = modulated.demodulate(s,'filtered')
 	demod, samp_freq = modulated.demodulate(s)
