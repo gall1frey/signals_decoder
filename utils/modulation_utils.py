@@ -189,7 +189,7 @@ class FSK:
 		return y_filtered
 
 	def moving_mean(self,sig):
-		mean = np.mean(y_filtered)
+		mean = np.mean(sig)
 		sig[sig > mean] = 1
 		sig[sig < mean] = 0
 		return sig

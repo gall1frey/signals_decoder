@@ -59,8 +59,7 @@ if __name__ == '__main__':
 
 	#Convert string data to binary array to transmit
 	data = d.str_to_binarray('hello there, general kenobi')
-	print(data)
-	print(len(data))
+
 	#Modulate
 	modulated = r.GFSK(sampling_freq=10,carrier_freq=5)
 
@@ -72,7 +71,6 @@ if __name__ == '__main__':
 
 	#Convert demodulated square wave into signal
 	demod, samp_freq = modulated.demodulate(s)
-	print(demod[::samp_freq][1:])
 
 	#Convert data to string
 	print(d.binarray_to_string(demod[::samp_freq][1:]))
@@ -83,6 +81,6 @@ if __name__ == '__main__':
 	x, y1, y2, y3 = s.get_time_domain()
 	g1 = graphData(x,y1,'time','amplitude')
 	#x, a, p = s.get_frequency_domain()
-	g2 = graphData(x,demod,'freq','amplitude')
+	g2 = graphData(x,demod,'time','amplitude')
 	#g3 = graphData(x,y3,'time','amplitude')
-	graphUtils.plot_wave([g1,g2],'time-amplitude graph for GFSK modulation')
+	graphUtils.plot_wave([g1,g2],'superimposed square wave for GFSK modulation')
