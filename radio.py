@@ -49,16 +49,31 @@ class Radio(QAM,dataUtils,graphUtils,graphData,fileUtils):
 		return self.Predictor.predict(signal)
 
 if __name__ == '__main__':
-	#DEBUGGING
+	"""
+		Testing
+	"""
+
+	#Create a radio and data utils object
 	r = Radio()
 	d = dataUtils()
+
+	#Convert string data to binary array to transmit
 	data = d.str_to_binarray('hello there, general kenobi')
-	#data = [0,0,1,1,0,1,0,1]
-	qam16 = r.GFSK(sampling_freq=10,carrier_freq=5)
-	print(r.predict_modulation(qam16.signal))
-	s = qam16.modulate(data)
-	print(d.binarray_to_string(qam16.demodulate(s)))
-	#graphUtils().plot_constellation('constellation map for GFSK modulation',[qam16.get_sig_constellation(s),qam16.get_constellations()],mods=True)
+
+	#Modulate
+	modulated = r.GFSK(sampling_freq=10,carrier_freq=5)
+
+	#Predict modulation
+	print(r.predict_modulation(modulated.signal))
+
+	#Demodulate
+	s = modulated.modulate(data)
+
+	#Convert demodulated square wave into signal
+	print(d.binarray_to_string(modulated.demodulate(s)))
+
+	#visualize
+	#graphUtils().plot_constellation('constellation map for GFSK modulation',[modulated.get_sig_constellation(s),qam16.get_constellations()],mods=True)
 	#s.amplify(1.5,'baseband')
 	x, y1, y2, y3 = s.get_time_domain()
 	g1 = graphData(x,y1,'time','amplitude')
