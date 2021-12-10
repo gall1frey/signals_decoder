@@ -4,3 +4,4 @@ tensorflow
 scipy
 matplotlib
 cmath
+keras
