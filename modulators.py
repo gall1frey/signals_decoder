@@ -53,8 +53,8 @@ class PSK8(QAM):
 		self.sampling_freq = sampling_freq
 		self.amplitude = amplitude
 		self.modulation = PSK_CONSTELLATIONS(bits_per_sample=self.bits_per_sample).get_constellation_map()
-		self.q1 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq,modulation=self.modulation)
 		super().__init__(modulation=self.modulation,sampling_freq=sampling_freq,carrier_freq=carrier_freq,bits_per_sample=self.bits_per_sample)
+		self.q1 = QAM(sampling_freq=sampling_freq,bits_per_sample=self.bits_per_sample,carrier_freq=carrier_freq,modulation=self.modulation)
 
 class GFSK(FSK):
 	def __init__(self,sampling_freq = 10,carrier_freq = 9.9e3,bits_per_sample=1):

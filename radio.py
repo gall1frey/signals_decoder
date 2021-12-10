@@ -57,7 +57,7 @@ if __name__ == '__main__':
 	"""
 
 	#Create a radio and data utils object
-	r = Radio()
+	r = Radio(model_path='./models/model.h5')
 	d = dataUtils()
 
 	#Convert string data to binary array to transmit
@@ -65,28 +65,28 @@ if __name__ == '__main__':
 	data = d.str_to_binarray('hello')
 
 	#Modulate
-	modulated = r.GFSK(sampling_freq=10,carrier_freq=10)
+	modulated = r.QAM256(sampling_freq=10,carrier_freq=20)
 	s = modulated.modulate(data)
 
 	#Predict modulation
 	print("PREDICTION:",r.predict_modulation(s.signal))
 
 	#Demodulate
-	demod_, samp_freq = modulated.demodulate(s,'filtered')
+	#demod_, samp_freq = modulated.demodulate(s,'filtered')
 	demod, samp_freq = modulated.demodulate(s)
 
 	#Convert data to string
-	#print(d.binarray_to_string(demod))
-	print(d.binarray_to_string(demod[::samp_freq][1:]))
+	print(d.binarray_to_string(demod))
+	#print(d.binarray_to_string(demod[::samp_freq][1:]))
 
 	#visualize
-	#graphUtils().plot_constellation('constellation map for GFSK modulation',[modulated.get_sig_constellation(s),modulated.get_constellations()],mods=True)
+	graphUtils().plot_constellation('constellation map for QAM modulation',[modulated.get_sig_constellation(s),modulated.get_constellations()],mods=True)
 	#s.amplify(1.5,'baseband')
-	x, y1, y2, y3 = s.get_time_domain()
-	g1 = graphData(x,y1,'time','amplitude')
+	#x, y1, y2, y3 = s.get_time_domain()
+	#g1 = graphData(x,y1,'time','amplitude')
 	#x, a, p = s.get_frequency_domain()
 	#g2 = graphData(x,y3,'time','amplitude')
-	g2 = graphData(x,demod,'time','amplitude')
+	#g2 = graphData(x,demod,'time','amplitude')
 	#g3 = graphData(x,y2,'time','amplitude')
-	g3 = graphData(x,demod_,'time','amplitude')
-	graphUtils.plot_wave([g1,g2,g3],'superimposed square wave for GFSK modulation')
+	#g3 = graphData(x,demod_,'time','amplitude')
+	#graphUtils.plot_wave([g1,g2,g3],'superimposed square wave for GFSK modulation')
