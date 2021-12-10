@@ -1,1 +1,6 @@
 pyrtlsdr
+numpy
+tensorflow
+scipy
+matplotlib
+cmath
